@@ -1,18 +1,14 @@
 #!/usr/bin/env python
-""" [thumbs09.py]:
- Search through the current directory and create
+""" [thumble.py]:
+ Search through a given directory and create
  100px wide resized copies of all images found,
  then format into a thumbnail gallery (HTML/CSS), 
  with each thumbnail linked to its full-sized original.
  
- Changes: No longer list the filename with the thumbnails.
-          Create resized copies, rather than just using
-          the size attributes of the <img> tag.
-
  Coded by Dayo Adewunmi 100224
 
- TODO: Nicer formatting. Look for the module that handles that.
-       A panel at the top, with previous <--current-->next thumb."""
+ TODO: - Pagination.
+       - A panel at the top, with previous <--current-->next thumb."""
 
 import os
 import PIL
@@ -86,15 +82,15 @@ def endIndexHTML():
 indexFile = "index.html"
 writeFile = open(indexFile, "w")
    
-titleTag = '<html><head><title>Wallpapers</title>'
+titleTag = '<html><head><title>Thumble - Image gallery</title>'
 includeCSS = '<link href="thumbstyles.css" rel="stylesheet" type="text/css" /></head>'
 header = titleTag + includeCSS  
 
 startBodyTag = '<body>'
-howto = '<strong><h4>Dayo\'s wallpapers</h4> To view full-size: click on image. To save wallpaper: right-click on image and click "Save Link As"</strong>'
+howto = '<strong><h4></h4> To view full-size: click on image. To save a picture: right-click on image and click "Save Link As"</strong>'
 startDivs = '<div id="container"><div class="newrow">'
 
-footer = '<div id="footer">Thumbnail gallery generated with <a href="http://python.org" target="_blank">Python</a></div>'
+footer = '<div id="footer">Thumbnail gallery generated with <a href="" target="_blank">Thumble</a></div>'
 
 top = header + startBodyTag + howto + startDivs 
 
