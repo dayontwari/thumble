@@ -1,11 +1,23 @@
 #!/usr/bin/env python
-""" [thumble.py]:
+""" [thumble.py 0.2]:
  Search through a given directory and create
  100px wide resized copies of all images found,
  then format into a thumbnail gallery (HTML/CSS), 
  with each thumbnail linked to its full-sized original.
  
- Coded by Dayo Adewunmi 100224
+ Copyright 2010, 2011 Dayo Adewunmi 100224
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  TODO: - Pagination.
        - A panel at the top, with previous <--current-->next thumb."""

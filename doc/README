@@ -1,0 +1,37 @@
+README
+======
+
+thumble 0.2
+    Command-line tool for organizing image files 
+    of a directory into an HTML/CSS-based thumbnail
+    gallery.
+
+Author:
+    Dayo Adewunmi <jargonsummary@gmail.com>
+
+License:
+    GNU GPLv3
+
+Requirements:
+    - python-imaging (for PIL)
+      On Debian: $ aptitude install python-imaging
+
+Installation:
+    1. Copy all files into the directory where you store your images
+    and run thumble.py in your terminal:
+    $ python thumble.py
+    2. Open the resulting index.html file in your browser to view
+       the thumbnail gallery.
+
+Feedback:
+    Any type of helpful feedback is always welcome. You can also
+    come see me on identi.ca: http://identi.ca/jargon, or send me
+    and email to jargonsummary@gmail.com. I'm also on IRC in the
+    Python channel on freenode. My nick is jargon-.
+
+Credits:
+    A big thank you to all the patient and help and education I get
+    from all the wonderful people on IRC in #python and on the Python
+    Tutor mailing list (tutor@python.org). Most of what I know
+    about Python I've learned from them.
+
