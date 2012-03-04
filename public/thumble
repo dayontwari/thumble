@@ -4,7 +4,7 @@
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120304
-# Version			: 0.3
+# Version			: 0.4
 # Usage			: 
 # Notes			: 
 # Python version	: 2.6.6
@@ -15,22 +15,22 @@ import PIL
 from PIL import Image
 import re
 
-# Create thumbnails from images
-def createThumbs():
-    """ """
-    # Get current directory path
+def getpathname():
+    """ Get pathname of current working directory."""
     absolutePath = os.getcwd()
+    
+    return absolutePath
 
-    # Get the name of the current directory
-    currentdir = os.path.basename(absolutePath)
-
+def createThumbs():
+    """ Create thumbnails from images."""
     linebreak = 1
 
     newrow = '</div></div><div class="newrow">'
     samerow = '</div>'
 
     # Go through the filenames in the current directory...
-    for dirname, subdirname, filenames in os.walk(absolutePath):
+    #for dirname, subdirname, filenames in os.walk(absolutePath):
+    for dirname, subdirname, filenames in os.walk(getpathname()):
         for filename in filenames:
             # Find all images
             if isImageFile(filename):
