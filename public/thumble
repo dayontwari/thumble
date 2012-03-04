@@ -4,7 +4,7 @@
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120304
-# Version			: 0.4
+# Version			: 0.5
 # Usage			: 
 # Notes			: 
 # Python version	: 2.6.6
@@ -14,12 +14,25 @@ import os
 import PIL
 from PIL import Image
 import re
+import subprocess
 
-def getpathname():
+def getPathname():
     """ Get pathname of current working directory."""
     absolutePath = os.getcwd()
     
     return absolutePath
+
+def cleanSlate():
+    """ Remove pre-existing thumble_* files from current working directory."""
+    thumbleprefix = "thumble_"
+    for dirname, subdirname, filenames in os.walk(getPathname()):
+        for filename in filenames:
+            # Find all images
+            if isImageFile(filename):
+                # If it's a thumble_* file then delete it.
+                if filename[:8] == thumbleprefix:
+                    print "Deleting pre-existing thumble_* file: %s" %(filename)
+                    subprocess.Popen(['rm', filename], stdout=subprocess.PIPE).communicate()[0]
 
 def createThumbs():
     """ Create thumbnails from images."""
@@ -28,9 +41,13 @@ def createThumbs():
     newrow = '</div></div><div class="newrow">'
     samerow = '</div>'
 
-    # Go through the filenames in the current directory...
-    #for dirname, subdirname, filenames in os.walk(absolutePath):
-    for dirname, subdirname, filenames in os.walk(getpathname()):
+    # Go through the filenames in the current directory and delete
+    # all pre-existing thumble_* files, first.
+    cleanSlate()
+
+    # Go through the filenames in the current directory again and
+    # create thumbnails from images found.
+    for dirname, subdirname, filenames in os.walk(getPathname()):
         for filename in filenames:
             # Find all images
             if isImageFile(filename):
