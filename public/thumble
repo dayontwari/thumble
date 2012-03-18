@@ -4,7 +4,7 @@
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120304
-# Version			: 0.6
+# Version			: 0.7
 # Usage			: 
 # Notes			: 
 # Python version	: 2.6.6
@@ -22,23 +22,18 @@ def getPathname():
     
     return absolutePath
 
-# Match files that are image files
 def isImageFile(filename):
-    """ """
+    """ Match files that are image files"""
     image_re = re.compile('\.gif$|\.jpe?g$|\.png$|\.svg$|\.tiff?$', re.I)
     return image_re.search(filename)
 
-def cleanSlate():
-    """ Remove pre-existing thumble_* files from current working directory."""
-    thumbleprefix = "thumble_"
-    for dirname, subdirname, filenames in os.walk(getPathname()):
-        for filename in filenames:
-            # Find all images
-            if isImageFile(filename):
-                # If it's a thumble_* file then delete it.
-                if filename[:8] == thumbleprefix:
-                    print "Deleting pre-existing thumble_* file: %s" %(filename)
-                    subprocess.Popen(['rm', filename], stdout=subprocess.PIPE).communicate()[0]
+def isthumble(thumblefilename):
+    """ Check if the first 8 characters of the target file is 'thumble_',
+    then it's a thumbnail file that already exists, so don't overwrite."""
+    if thumblefilename[:8] == "thumble_":
+        return True
+    else:
+        return False
 
 def createThumbs():
     """ Create thumbnails from images."""
@@ -47,38 +42,39 @@ def createThumbs():
     newrow = '</div></div><div class="newrow">'
     samerow = '</div>'
 
-    # Go through the filenames in the current directory and delete
-    # all pre-existing thumble_* files, first.
-    cleanSlate()
-
     # Go through the filenames in the current directory again and
     # create thumbnails from images found.
     for dirname, subdirname, filenames in os.walk(getPathname()):
         for filename in filenames:
             # Find all images
             if isImageFile(filename):
-                # ...and create thumbnails
-                # Resize an image (somepic.jpg) using PIL (Python Imaging Library)
-                # to a width of 300 pixels and a height proportional to the new width. 
-                # It does this by determining what percentage 300 pixels is of the 
-                # original width (img.size[0]) and then multiplying the original height 
-                # (img.size[1]) by that percentage. Change "basewidth" to any other 
-                # number to change the default width of your images.
-                basewidth = 100
-                img = Image.open(filename)
-                widthPercent = (basewidth/float(img.size[0]))
-                height = int((float(img.size[1])*float(widthPercent)))
-
-                img = img.resize((basewidth, height), PIL.Image.ANTIALIAS)
-                thumbname = 'thumble_' + filename
-                img.save(thumbname)
-
-                if linebreak % 5 == 0:
-                    createGallery(filename,thumbname,newrow)
+                # First check if a corresponding thumbnail file already exists.
+                # If it does, then return an error and skip thumbnail creation.
+                if isthumble(filename):
+                    print "Error: Thumbnail %s already exists. Skipping." %(filename)
+                # Else go ahead and create a thumbnail from the source image.
                 else:
-                    createGallery(filename,thumbname,samerow)
+                    # Resize an image (somepic.jpg) using PIL (Python Imaging Library)
+                    # to a width of 300 pixels and a height proportional to the new width. 
+                    # It does this by determining what percentage 300 pixels is of the 
+                    # original width (img.size[0]) and then multiplying the original height 
+                    # (img.size[1]) by that percentage. Change "basewidth" to any other 
+                    # number to change the default width of your images.
+                    basewidth = 100
+                    img = Image.open(filename)
+                    widthPercent = (basewidth/float(img.size[0]))
+                    height = int((float(img.size[1])*float(widthPercent)))
 
-                linebreak = linebreak + 1
+                    img = img.resize((basewidth, height), PIL.Image.ANTIALIAS)
+                    thumbname = 'thumble_' + filename
+                    img.save(thumbname)
+
+                    if linebreak % 5 == 0:
+                        createGallery(filename,thumbname,newrow)
+                    else:
+                        createGallery(filename,thumbname,samerow)
+
+                    linebreak = linebreak + 1
 
 def createGallery(filename,thumbname,divtype):
     """ """
