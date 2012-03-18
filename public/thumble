@@ -4,7 +4,7 @@
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120304
-# Version			: 0.7
+# Version			: 0.7.1
 # Usage			: 
 # Notes			: 
 # Python version	: 2.6.6
@@ -16,13 +16,13 @@ from PIL import Image
 import re
 import subprocess
 
-def getPathname():
+def getpathname():
     """ Get pathname of current working directory."""
     absolutePath = os.getcwd()
     
     return absolutePath
 
-def isImageFile(filename):
+def isimage(filename):
     """ Match files that are image files"""
     image_re = re.compile('\.gif$|\.jpe?g$|\.png$|\.svg$|\.tiff?$', re.I)
     return image_re.search(filename)
@@ -35,7 +35,7 @@ def isthumble(thumblefilename):
     else:
         return False
 
-def createThumbs():
+def createthumbs():
     """ Create thumbnails from images."""
     linebreak = 1
 
@@ -44,10 +44,10 @@ def createThumbs():
 
     # Go through the filenames in the current directory again and
     # create thumbnails from images found.
-    for dirname, subdirname, filenames in os.walk(getPathname()):
+    for dirname, subdirname, filenames in os.walk(getpathname()):
         for filename in filenames:
             # Find all images
-            if isImageFile(filename):
+            if isimage(filename):
                 # First check if a corresponding thumbnail file already exists.
                 # If it does, then return an error and skip thumbnail creation.
                 if isthumble(filename):
@@ -82,7 +82,7 @@ def createGallery(filename,thumbname,divtype):
     writeFile.write(thumb)
 
 
-def endIndexHTML():
+def endindexhtml():
     """ """
     endDivs = '</div>'
     endBodyTag = '</div></body></html>'
@@ -109,8 +109,8 @@ top = header + startBodyTag + howto + startDivs
 
 writeFile.write(top)
 
-createThumbs()
-endIndexHTML()
+createthumbs()
+endindexhtml()
 
 print ""
 
