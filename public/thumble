@@ -9,13 +9,14 @@
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120624
-# Version			: 0.7.6
+# Version			: 0.7.6.1
 # Licensing         : GPLv3
 # Usage			: thumble <SOURCE> <DESTINATION> [-w <WIDTH>]
 # Notes			: 
 # Python version	: 2.6.6
 # TODO              : Thumble should create destination directories, if they
 #                     don't already exist.
+# TODO              : Improve linebreaking.
 #==============================================================================
 
 import optparse
@@ -32,7 +33,7 @@ def isImage(filename):
     return image_re.search(filename)
 
 def isThumble(thumbleFilename):
-    """ Check if the first 8 characters of the target file is 'thumble_',
+    """ If the first 8 characters of the target file is 'thumble_',
     then it's a thumbnail file that already exists, so don't overwrite."""
     if thumbleFilename[:8] == "thumble_":
         return True
@@ -41,18 +42,21 @@ def isThumble(thumbleFilename):
 
 def createThumbnail(fullsizeImg, galleryDir, thumbwidth):
     """ Resize an image (somepic.jpg) using PIL (Python Imaging Library)\
-            to a width of 300 pixels and a height proportional to the new width. 
-        It does this by determining what percentage 300 pixels is of the \
-                original width (img.size[0]) and then multiplying the original \
-                height (img.size[1]) by that percentage. Change "basewidth" to \
-                any other number to change the default width of your images."""
+            to a width provided by user input, or default width of 100 px,\
+            and a height proportional to the new width. 
+        It does this by determining what percentage the thumbnail width pixels\
+                are of the fullsize width (img.size[0]) and then multiplying \
+                the fullsize height (img.size[1]) by that percentage.""" 
     basewidth = thumbwidth
     img = PIL.Image.open(fullsizeImg)
+    # Determine what percentage the thumbnail width is of the fullsize width.
     widthPercent = (basewidth/float(img.size[0]))
+    # And then use that to calculate the thumbnail's proportional height.
     height = int((float(img.size[1])*float(widthPercent)))
 
     print "Creating thumbnail for %s" %(fullsizeImg)
 
+    # Create the thumbnails using the new width and height values.
     img = img.resize((basewidth, height), PIL.Image.ANTIALIAS)
     abspathToThumbname = galleryDir + '/thumble_' + os.path.basename(fullsizeImg)
     img.save(abspathToThumbname)
@@ -60,7 +64,7 @@ def createThumbnail(fullsizeImg, galleryDir, thumbwidth):
     return abspathToThumbname
 
 def addToGalleryFile(galleryFile, filename, thumbname, divtype):
-    """ Create hyperlinks with thumbnails."""
+    """ Create hyperlinks with thumbnails in the thumbnail gallery file."""
     thumb = '<div class="thumb"><a href="%s"><img src="%s" /></a>%s' %(filename, thumbname, divtype)
 
     print "Adding thumbnail %s to gallery." %(thumbname)
@@ -91,7 +95,8 @@ def closeGalleryFile(galleryFile):
     galleryFile.close()
 
 def findImages(imagesSourceDir, galleryDir, thumbwidth):
-    """ Create thumbnails from images."""
+    """ Find all the images in the source directory, when found pass\
+            them on for thumbnail creation."""
     linebreak = 1
 
     newrow = '</div></div><div class="newrow">'
@@ -111,10 +116,11 @@ def findImages(imagesSourceDir, galleryDir, thumbwidth):
                 # If it does, then return an error and skip thumbnail creation.
                 if isThumble(filename):
                     print "Error: Thumbnail %s already exists. Skipping." %(filename)
-                # Else go ahead and create a thumbnail from the source image.
                 else:
-                    # Get absolute path to the fullsize image file.
+                    # Get absolute path to the fullsize image file. And pass this
+                    # on for thumbnail creation.
                     imageAbspath = imagesSourceDir + '/%s' %(filename)
+                    # Writing 5 thumbnails per line in the gallery
                     if linebreak % 5 == 0:
                         addToGalleryFile(galleryFile, imageAbspath, createThumbnail(imageAbspath, galleryDir, thumbwidth), newrow)
                     else:
@@ -126,6 +132,8 @@ def findImages(imagesSourceDir, galleryDir, thumbwidth):
     copyCSS(galleryDir)
 
 def openGalleryFile(destinationDir):
+    """ Open and prepopulate the thumbnail gallery's HTML file\
+            with the necessary HTML/CSS tags."""
     indexFile = destinationDir + "/index.html"
     writeFile = open(indexFile, "w")
     titleTag = '<html><head><title>Thumble - Image gallery</title>'
@@ -135,7 +143,6 @@ def openGalleryFile(destinationDir):
     startBodyTag = '<body>'
     howto = '<strong><h4></h4> To view full-size: click on image. To save a picture: right-click on image and click "Save Link As"</strong>'
     startDivs = '<div id="container"><div class="newrow">'
-
 
     top = header + startBodyTag + howto + startDivs
 
