@@ -1,18 +1,24 @@
 #!/usr/bin/env python
 # Filename		: thumble
-# Description		: Search through a given directory and create 100px wide resized copies of all images found, then format into a thumbnail gallery (HTML/CSS), with each thumbnail linked to its full-sized original.
+# Description		: Search through a given directory and create thumbnails of 
+#                     all images found. Default width of a thumbnail is 100px.
+#                     Custom width can be passed as command line parameter. 
+#                     Thumble then creates the thumbnails and a thumbnail gallery 
+#                     using HTML/CSS, with each thumbnail hyperlinked to its 
+#                     fullsized original.
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120624
-# Version			: 0.7.5
+# Version			: 0.7.6
 # Licensing         : GPLv3
-# Usage			: thumble <SOURCE> <DESTINATION>
+# Usage			: thumble <SOURCE> <DESTINATION> [-w <WIDTH>]
 # Notes			: 
 # Python version	: 2.6.6
-# TODO              : Script needs to find or copy the CSS file.
-# TODO              : User should be able to choose thumbnail dimensions.
+# TODO              : Thumble should create destination directories, if they
+#                     don't already exist.
 #==============================================================================
 
+import optparse
 import os
 import PIL
 from PIL import Image
@@ -33,14 +39,15 @@ def isThumble(thumbleFilename):
     else:
         return False
 
-def createThumb(fullsizeImg, galleryDir):
+def createThumbnail(fullsizeImg, galleryDir, thumbwidth):
     """ Resize an image (somepic.jpg) using PIL (Python Imaging Library)\
             to a width of 300 pixels and a height proportional to the new width. 
         It does this by determining what percentage 300 pixels is of the \
                 original width (img.size[0]) and then multiplying the original \
                 height (img.size[1]) by that percentage. Change "basewidth" to \
                 any other number to change the default width of your images."""
-    basewidth = 100
+    #basewidth = 100
+    basewidth = thumbwidth
     img = PIL.Image.open(fullsizeImg)
     widthPercent = (basewidth/float(img.size[0]))
     height = int((float(img.size[1])*float(widthPercent)))
@@ -84,7 +91,7 @@ def closeGalleryFile(galleryFile):
     galleryFile.write(bottom)
     galleryFile.close()
 
-def findimages(imagesSourceDir, galleryDir):
+def findImages(imagesSourceDir, galleryDir, thumbwidth):
     """ Create thumbnails from images."""
     linebreak = 1
 
@@ -110,9 +117,9 @@ def findimages(imagesSourceDir, galleryDir):
                     # Get absolute path to the fullsize image file.
                     imageAbspath = imagesSourceDir + '/%s' %(filename)
                     if linebreak % 5 == 0:
-                        addToGalleryFile(galleryFile, imageAbspath, createThumb(imageAbspath, galleryDir), newrow)
+                        addToGalleryFile(galleryFile, imageAbspath, createThumbnail(imageAbspath, galleryDir, thumbwidth), newrow)
                     else:
-                        addToGalleryFile(galleryFile, imageAbspath, createThumb(imageAbspath, galleryDir), samerow)
+                        addToGalleryFile(galleryFile, imageAbspath, createThumbnail(imageAbspath, galleryDir, thumbwidth), samerow)
 
                     linebreak = linebreak + 1
 
@@ -138,23 +145,29 @@ def openGalleryFile(destinationDir):
     return writeFile
 
 def main():
-    # Get source and destination of images
-    if len(argv) != 3:
-        print "Usage: python thumble <SOURCE DIR> <DESTINATION DIR>"
-    else:
-        # Convert source and destination directories to
-        # absolute paths.
-        abspathSourceDir = os.path.abspath(os.path.expanduser(argv[1]))
-        abspathDestinationDir = os.path.abspath(os.path.expanduser(argv[2]))
-        # Check if paths are correct
-        if os.path.exists(abspathSourceDir):
-            if os.path.exists(abspathDestinationDir):
-                    findimages(abspathSourceDir, abspathDestinationDir)
-            else:
-                    print "ERROR: Destination directory does not exist."
+    # Add command line parameters: source dir, destination dir, thumbnail width.
+    usage = "Usage: %prog [options] arg"
+    parser = optparse.OptionParser()
+    parser.add_option("-s", "--source", dest="sourcedir", action="store", default=".")
+    parser.add_option("-d", "--destination", dest="destinationdir", action="store", default="/tmp")
+    parser.add_option("-w", "--width", dest="width", action="store", default="100", type=int)
+
+    options, args = parser.parse_args()
+
+    # Expand source and destination paths (if necessary).
+    abspathSourceDir = os.path.abspath(os.path.expanduser(options.sourcedir))
+    abspathDestinationDir = os.path.abspath(os.path.expanduser(options.destinationdir))
+
+    thumbwidth = options.width
+
+    # Check if paths are exist.
+    if os.path.exists(abspathSourceDir):
+        if os.path.exists(abspathDestinationDir):
+            findImages(abspathSourceDir, abspathDestinationDir, thumbwidth)
         else:
-            print "ERROR: Source directory does not exist."
-            
-    
+            print "ERROR: Destination directory does not exist."
+    else:
+        print "ERROR: Source directory does not exist."
+
 if __name__ == "__main__":
     main()
