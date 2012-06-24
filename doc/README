@@ -1,7 +1,7 @@
 README
 ======
 
-thumble 0.2
+thumble 0.7.6
     Command-line tool for organizing image files 
     of a directory into an HTML/CSS-based thumbnail
     gallery.
@@ -17,16 +17,26 @@ Requirements:
       On Debian: $ aptitude install python-imaging
 
 Installation:
-    1. Copy all files into the directory where you store your images
-    and run thumble.py in your terminal:
-    $ python thumble.py
-    2. Open the resulting index.html file in your browser to view
-       the thumbnail gallery.
+    1. As root:
+        $ mkdir -p /usr/local/bin/thumble
+    2. Copy all files into /usr/local/bin/thumble
+    3. Open a terminal and run the thumble command with
+       a source directory where the fullsized images are
+       stored, and a destination directory where you want
+       the thumbnail gallery to be stored, e.g.:
+        $ thumble ~/images/wallpapers ~/documents/gallery
+       
+       By default, thumble creates 100px wide thumbnails.
+       You can use a different width for your thumbnails, e.g.:
+        $ thumble ~/images/wallpapers ~/documents/gallery -w 180
+       
+       Open index.html from the gallery directory, to view the
+       thumbnail gallery.
 
 Feedback:
     Any type of helpful feedback is always welcome. You can also
     come see me on identi.ca: http://identi.ca/jargon, or send me
-    and email to jargonsummary@gmail.com. I'm also on IRC in the
+    and email to jargonsummary@googlemail.com. I'm also on IRC in the
     Python channel on freenode. My nick is jargon-.
 
 Credits:

@@ -46,7 +46,6 @@ def createThumbnail(fullsizeImg, galleryDir, thumbwidth):
                 original width (img.size[0]) and then multiplying the original \
                 height (img.size[1]) by that percentage. Change "basewidth" to \
                 any other number to change the default width of your images."""
-    #basewidth = 100
     basewidth = thumbwidth
     img = PIL.Image.open(fullsizeImg)
     widthPercent = (basewidth/float(img.size[0]))
