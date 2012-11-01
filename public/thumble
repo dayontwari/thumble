@@ -9,13 +9,11 @@
 # Author			: Dayo Adewunmi
 # Email:			: jargonsummary@googlemail.com
 # Date			: 20120624
-# Version			: 0.7.6.1
+# Version			: 0.7.6.2
 # Licensing         : GPLv3
 # Usage			: thumble <SOURCE> <DESTINATION> [-w <WIDTH>]
 # Notes			: 
 # Python version	: 2.6.6
-# TODO              : Thumble should create destination directories, if they
-#                     don't already exist.
 # TODO              : Improve linebreaking.
 #==============================================================================
 
@@ -24,12 +22,13 @@ import os
 import PIL
 from PIL import Image
 import re
+import shutil
 import subprocess
-from sys import argv
 
 def isImage(filename):
     """ Match files that are image files"""
     image_re = re.compile('\.gif$|\.jpe?g$|\.png$|\.svg$|\.tiff?$', re.I)
+
     return image_re.search(filename)
 
 def isThumble(thumbleFilename):
@@ -78,10 +77,10 @@ def copyCSS(thumbDirname):
     print "Creating %s" %(cssDirname)
     os.makedirs(cssDirname)
 
-    cssFile = '/usr/local/bin/thumble/css/thumbstyles.css'
+    cssFile = '/usr/share/thumble/css/thumbstyles.css'
 
     print "Copying %s" %(cssFile)
-    subprocess.call(['cp', cssFile, cssDirname])
+    shutil.copy2(cssFile, cssDirname)
 
 def closeGalleryFile(galleryFile):
     """ Create closing tags at the end of the gallery's html file."""
